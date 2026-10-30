@@ -1,0 +1,7 @@
+build/
+__pycache__/
+*.o
+*.po
+*.hdv
+*.2mg
+ac.jar
