@@ -284,7 +284,7 @@ unsigned char __fastcall__ load_ovl(unsigned char n)
     if (cur_ovl == n) return 1;
     strcpy(op, progdir);
     strcat(op, "/RW2.OVL1");
-    op[strlen(op) - 1] = '0' + n;
+    op[strlen(op) - 1] = n < 10 ? '0' + n : 'A' - 10 + n;
     fd = open(op, O_RDONLY);
     if (fd < 0) { cur_ovl = 0; alert("Can't load part of RetroWrite II\n(RW2.OVLn is missing).", "OK", 0, 0); return 0; }
     r = read(fd, (void *)OVLADDR, OVLSIZE);
@@ -304,9 +304,22 @@ unsigned char __fastcall__ load_ovl(unsigned char n)
 
 unsigned char ftype;
 
+static unsigned char __fastcall__ is_odt(const char *s)
+{
+    unsigned char n = (unsigned char)strlen(s);
+    return n > 4 && !strcmp(s + n - 4, ".ODT");
+}
+
+/* ODT files go through overlays 8 (save) and 9 + 10 (open) */
 static unsigned char __fastcall__ fop(unsigned char op)
 {
-    return load_ovl(OV_FILE) ? file_op(op) : 0;
+    unsigned char r;
+    if (op == FO_LOAD && ftype == FT_ODT)
+        return load_ovl(OV_ODTIN) && odt_unzip() && load_ovl(OV_ODTRD) && odt_read();
+    if (op == FO_SAVETO && is_odt(pathbuf)) r = 3;
+    else r = load_ovl(OV_FILE) ? file_op(op) : 0;
+    if (r == 3) return load_ovl(OV_ODTOUT) && odt_content() && load_ovl(OV_ODTZIP) && odt_save();
+    return r;
 }
 
 static unsigned char __fastcall__ pick(unsigned char mode)

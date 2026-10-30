@@ -366,13 +366,14 @@ unsigned char __fastcall__ file_op(unsigned char op)
             !alert("A text file can't keep fonts, sizes\nor styles. Save it as text anyway?", "Save", "Cancel", 0);
     case FO_SAVE:
         if (!docpath[0]) return 2;
-        if (doctype && has_formatting()) {
+        if (doctype == 1 && has_formatting()) {
             r = alert("This document came from a text file,\nwhich can't keep fonts and styles.\nSave as a RetroWrite document?",
                       "RetroWrite", "Text", "Cancel");
             if (r == 2) return 0;
             if (r == 0) return 2;
         }
         strcpy(pathbuf, docpath);
+        if (doctype == 2) return 3;     /* ODT: overlay 8 */
         return do_save(doctype);
     case FO_SWAPOUT: return swap_out();
     case FO_SWAPIN: return swap_in();

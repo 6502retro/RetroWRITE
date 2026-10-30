@@ -110,7 +110,8 @@ def reference(g):
           (SEE, 'The Windows Menu; Close'))
 
     entry('Open', 'File', '@-O',
-          (D, 'Opens a RetroWrite II document or a text file from a disk.'),
+          (D, 'Opens a RetroWrite II document, an ODT document (LibreOffice, OpenOffice or '
+              'Word) or a text file from a disk.'),
           (T, *steps('Choose Open... from the File menu, or press %s.' % oa('O'),
                      'The dialog lists the folders (%s) and documents (%s) in the current '
                      'folder. Click a document and click <b>Open</b>, or double-click it.'
@@ -120,9 +121,10 @@ def reference(g):
           (E, 'To open the sample letter, press %s, type %s (the list jumps to the first '
               'name starting with L) and press Return.' % (oa('O'), scr('L'))),
           (N, 'Keyboard: up and down arrows choose, right arrow or Return opens, left arrow '
-              'goes up a folder, Esc cancels. Only folders, RetroWrite II documents and text '
-              'files are listed, up to 48 per folder. A text file opens as plain text in Sans '
-              '9 point.'),
+              'goes up a folder, Esc cancels. Only folders, RetroWrite II documents, ODT '
+              'documents (names ending in .ODT) and text files are listed, up to 48 per '
+              'folder. A text file opens as plain text in Sans 9 point. An ODT document shows '
+              'a bar while it is unpacked; see “ODT documents” below.'),
           (SEE, 'New; Save; Startup Preferences'), index=['Open', 'file dialog', 'text files'])
     A(shot(scrn('open'), 'The Open dialog', width=290, crop=(60, 20, 500, 180)))
 
@@ -141,24 +143,29 @@ def reference(g):
           (D, 'Saves the document on the screen under its name.'),
           (T, *steps('Choose Save from the File menu, or press %s.' % oa('S'))),
           (N, 'If the document has no name yet, the Save As dialog appears. A document that '
+              'came from an ODT document is saved as ODT again. A document that '
               'came from a text file is saved as a text file again; if you have added fonts '
               'or styles to it, RetroWrite II asks whether to save it as a RetroWrite '
               'document (which keeps them) or as text. Save often!'),
           (SEE, 'Save As; Save As Text'))
 
     entry('Save As', 'File', '@-A',
-          (D, 'Saves the document under a new name or in another folder, as a RetroWrite II '
-              'document that keeps all fonts, styles, the ruler and the header and footer.'),
+          (D, 'Saves the document under a new name or in another folder, normally as an ODT '
+              'document that LibreOffice, OpenOffice and Word can open. It keeps the fonts, '
+              'styles, ruler, header and footer.'),
           (T, *steps('Choose Save As... from the File menu, or press %s.' % oa('A'),
                      'Open the folder you want, as in the Open dialog.',
                      'Type the name in the <b>Name</b> box (Delete erases). Clicking a '
-                     'document in the list copies its name.',
+                     'document in the list copies its name. A name without a period gets '
+                     '%s added.' % scr('.ODT'),
                      'Click <b>Save</b> or press Return.')),
           (N, 'Names have up to 15 letters, digits and periods and start with a letter, as '
               'ProDOS requires. If a file with that name exists, you are asked whether to '
-              'replace it. RetroWrite II documents are ProDOS type $50 with aux type $5257.'),
+              'replace it. To save in RetroWrite II’s own format instead, give a name with any '
+              'other ending, such as %s; these are ProDOS type $50 with aux type $5257.'
+              % scr('LETTER.RW')),
           (SEE, 'Save; Save As Text'), index=['Save As', 'file names'])
-    A(shot(scrn('saveas'), 'The Save As dialog', width=290, crop=(60, 20, 500, 192)))
+    A(shot(scrn('saveas'), 'The Save As dialog', width=290, crop=(60, 26, 500, 192)))
 
     entry('Save As Text', 'File', None,
           (D, 'Saves the document as a plain ProDOS text file (TXT), which other programs '
@@ -169,6 +176,39 @@ def reference(g):
               'RetroWrite II warns you if the document has any. Each paragraph becomes one '
               'line ending with Return.'),
           (SEE, 'Save As'), index=['Save As Text', 'text files'])
+
+    sub('ODT documents')
+    A(P(ix('ODT documents', 'LibreOffice', 'Word') +
+        'ODT (OpenDocument Text) is the standard document format of LibreOffice and '
+        'OpenOffice; Microsoft Word, Google Docs and Apple Pages open it too. RetroWrite II '
+        'saves and opens ODT documents itself, so you can carry your work between the '
+        'Apple IIe and a modern computer: copy the file with a disk-image tool such as '
+        'CiderPress II or AppleCommander, or a shared hard disk, and double-click it there. '
+        'Going the other way, save from your word processor as ODT, with a name of up to 15 '
+        'letters, digits and periods ending in %s.' % scr('.ODT'), BODYJ))
+    A(table([['RetroWrite II', 'In the ODT document'],
+             ['Sans, Serif, Mono', 'Liberation Sans, Liberation Serif, Liberation Mono '
+              '(other fonts open as the nearest of the three)'],
+             ['9, 18 and 27 point', '12, 24 and 36 point, which keeps lines about as long '
+              'as RetroWrite II prints them (opening: up to 17 point is 9, up to 29 is 18)'],
+             ['Bold, italic, underline, superscript, subscript', 'the same'],
+             ['Alignment, line spacing, page breaks', 'the same'],
+             ['Ruler margins and tab stops', 'paragraph indents and tab stops'],
+             ['Header and footer, # for the page number', 'page header and footer with a '
+              'page-number field'],
+             ['Letters', 'plain ASCII; when opening, accented letters lose their accents and '
+              'curly quotes and dashes become straight ones']],
+            [150, COLW - 150]))
+    A(Spacer(1, 6))
+    A(P('When RetroWrite II opens an ODT document it leaves out pictures, '
+        'footnotes and comments (the text in tables is kept, one paragraph per cell), and '
+        'list items start with a dash. Opening takes time on a 1 MHz Apple IIe: about half '
+        'a minute for a short letter saved by LibreOffice, and less for documents RetroWrite '
+        'II saved itself, which are not compressed. Two work files, %s and %s, are made in '
+        'the RETROWRITE folder while a document is opened or saved, so the disk needs some '
+        'free space.' % (scr('RW2.XML1'), scr('RW2.XML2')), NOTE))
+    A(shot(scrn('odtopen'), 'Opening an ODT document', width=250, crop=(80, 50, 480, 130)))
+    A(shot(scrn('odtnews'), 'A document from LibreOffice, opened in RetroWrite II', width=290))
 
     entry('Page Setup', 'File', None,
           (D, 'Chooses your printer and how to print, and sets the header, footer and page '
@@ -561,8 +601,9 @@ def appendices(g):
              [scr('RW2.SYSTEM'), 'the program you start; shows the welcome picture'],
              [scr('RW2.MAIN'), 'the main part of the program'],
              [scr('RW2.LC') + ', ' + scr('RW2.FONTS'), 'more of the program, and the fonts'],
-             [scr('RW2.OVL1') + ' - ' + scr('RW2.OVL7'), 'parts read from the disk when needed: '
-              'files, spelling, editing, menus, printing, desk accessories, dialogs'],
+             [scr('RW2.OVL1') + ' - ' + scr('RW2.OVL9') + ', ' + scr('RW2.OVLA') + ', ' + scr('RW2.OVLB'),
+              'parts read from the disk when needed: files, spelling, editing, menus, printing, '
+              'desk accessories, dialogs, and saving and opening ODT documents'],
              [scr('RW2.SPLASH'), 'the welcome picture'],
              [scr('SPELL.DICT'), 'the dictionary (460K)'],
              [scr('TUTORIAL'), 'the Mouse Tutorial document'],
@@ -576,7 +617,9 @@ def appendices(g):
              [scr('RW2.PREFS'), 'your Startup Preferences'],
              [scr('RW2.CLIPBOARD'), 'the clipboard'],
              [scr('RW2.WIN0') + ' - ' + scr('RW2.WIN3'), 'documents waiting in other windows'],
-             [scr('RW2.QUIT'), 'only while you are in BASIC.SYSTEM']], [130, COLW - 130]))
+             [scr('RW2.QUIT'), 'only while you are in BASIC.SYSTEM'],
+             [scr('RW2.XML1') + ', ' + scr('RW2.XML2'), 'work files, only while an ODT document '
+              'is opened or saved']], [130, COLW - 130]))
     A(Spacer(1, 8))
     A(P(ix('documents folder') + 'Your documents can be anywhere. The disk that comes with '
         'RetroWrite II has a %s folder, where the Open and Save dialogs start the first '
@@ -596,6 +639,8 @@ def appendices(g):
              ['Glossary entry', 'about 190 characters'],
              ['File names', '15 characters (ProDOS)'],
              ['Files listed in a folder', '48'],
+             ['ODT documents', 'up to 30,460 characters of text, as above; opening a long one '
+              'takes a minute or more at 1 MHz'],
              ['Undo', 'there is no Undo: save often, and save copies of important work']],
             [140, COLW - 140]))
     A(Spacer(1, 8))
@@ -611,6 +656,7 @@ def appendices(g):
         ('A file with that name already exists. Replace it?', 'Click Replace to write over it, or Cancel and type another name.'),
         ('A hidden document could not be read back.', 'A RW2.WINn file was damaged or removed. The window starts empty; open the document again.'),
         ('A text file can’t keep fonts, sizes or styles. Save it as text anyway?', 'Click Save to lose the formatting in the text file, or Cancel and use Save As.'),
+        ('Can’t write a work file in the RetroWrite II folder (disk full?).', 'Make room on the disk that holds RETROWRITE, then open the ODT document again.'),
         ('BASIC.SYSTEM was not found.', 'Copy BASIC.SYSTEM into the RETROWRITE folder or the top level of the disk.'),
         ('Can’t load part of RetroWrite II (RW2.OVLn is missing).', 'A program file is missing from the RETROWRITE folder. Copy the folder again.'),
         ('Can’t open the document / Can’t put the document away', 'The disk is full, write-protected or offline. ProDOS’s error is shown with it.'),
@@ -627,6 +673,10 @@ def appendices(g):
         ('There is no Super Serial Card in slot n.', 'Choose the right slot in Communications.'),
         ('This document came from a text file, which can’t keep fonts and styles.', 'Click RetroWrite to save a RetroWrite document (with a new name), or Text to save plain text.'),
         ('This document is too large for RetroWrite II.', 'The file has more than 30,460 characters.'),
+        ('This document is protected with a password.', 'Save it again without a password in your word processor.'),
+        ('This document was too long for RetroWrite II: the end was left out.', 'The ODT document has more than 30,460 characters of text. Split it into smaller documents on the other computer.'),
+        ('This is not an ODT document. / This ODT document is damaged.', 'The file ends in .ODT but is not a complete ODT (ZIP) file. Copy it again; save it again as ODT.'),
+        ('This ODT document is compressed in a way RetroWrite II can’t read.', 'Save it again with LibreOffice, OpenOffice or Word.'),
         ('This is not a RetroWrite II document.', 'The file is another program’s document. Text files open directly.'),
         ('/RAM contains files that RetroWrite II will erase.', 'Press N, copy the files from /RAM to a disk, and start again; or press Y to go on.'),
     ]

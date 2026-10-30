@@ -5,7 +5,7 @@
 ;
         .setcpu         "65C02"
         .constructor    setstack, 31
-        .export         iobuf_alloc, iobuf_free
+        .export         iobuf_alloc, iobuf_free, _iob_limit
         .import         incsp2, popptr1
         .importzp       c_sp, ptr1
 
@@ -28,8 +28,8 @@ iobuf_alloc:
 :       lda     used,x
         beq     :+
         inx
-        cpx     #1              ; one buffer: $0C00-$0FFF holds the word pool
-        bcc     :-
+        cpx     _iob_limit      ; one buffer: $0C00-$0FFF holds the word pool,
+        bcc     :-              ; which the ODT overlays may borrow for a second
         lda     #ENOMEM
         rts
 :       dec     used,x
@@ -57,3 +57,4 @@ iobuf_free:
 
         .data
 used:   .byte   0, 0
+_iob_limit: .byte 1

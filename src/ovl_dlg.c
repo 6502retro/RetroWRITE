@@ -84,7 +84,8 @@ static void read_dir(void)
             l = n & 0x0F;
             if (!(n & 0xF0) || !l) continue;        /* deleted */
             t = e[0x10];
-            if (t == 0x0F || t == 0x04 ||
+            if (l > 4 && !memcmp(e + l - 3, ".ODT", 4)) t = FT_ODT;
+            if (t == 0x0F || t == 0x04 || t == FT_ODT ||
                 (t == RW_FILETYPE && e[0x1F] == (RW_AUXTYPE & 0xFF) && e[0x20] == (RW_AUXTYPE >> 8))) {
                 memcpy((*ENT(nents)).name, e + 1, l);
                 (*ENT(nents)).name[l] = 0;
@@ -141,10 +142,9 @@ static void draw_list(void)
         n = scr + i;
         if (n < nents) {
             e = ENT(n);
-            if (e->type == 0x04) ui_text(LX0 + 6, 8, 0, "\x83");
-            else if (e->type == RW_FILETYPE) ui_text(LX0 + 6, 8, 0, "\x83");
+            if (e->type == 0x04 || e->type == RW_FILETYPE || e->type == FT_ODT) ui_text(LX0 + 6, 8, 0, "\x83");
             else ui_text(LX0 + 4, 8, 0, "\x82");
-            ui_text(LX0 + 22, 8, e->type == RW_FILETYPE ? F_BOLD : 0, e->name);
+            ui_text(LX0 + 22, 8, e->type == 0x04 ? 0 : F_BOLD, e->name);
             if (n == sel) lb_fill(LX0 + 2, LX1 - 18, 0, 10, LB_XOR);
         } else if (n == 0) {
             ui_text(LX0 + 22, 8, F_ITAL, browsedir[0] ? "(no documents)" : "(no disks)");
@@ -241,6 +241,17 @@ static unsigned char valid_name(char *s)
     return 1;
 }
 
+/* Save As: names without an extension (or a .TXT one) become NAME.ODT;
+   any other name with a period saves a RetroWrite document */
+static void odt_name(void)
+{
+    char *dot = strchr(fname, '.');
+    if (dot && strcmp(dot, ".TXT")) return;
+    if (dot) *dot = 0;
+    fname[11] = 0;
+    if (fname[0]) strcat(fname, ".ODT");
+}
+
 /* returns 1 with the chosen path in pathbuf (and the file type in ftype)
    mode 0 open, 1 save, 2 save as text, 3 choose a document to print */
 unsigned char __fastcall__ file_dialog(unsigned char mode)
@@ -252,6 +263,7 @@ unsigned char __fastcall__ file_dialog(unsigned char mode)
     if (mode) {
         strcpy(fname, docpath[0] ? strrchr(docpath, '/') + 1 : "");
         if (mode == 2 && docpath[0] && strlen(fname) < 11 && !strchr(fname, '.')) strcat(fname, ".TXT");
+        if (mode == 1) odt_name();
     }
     if (docpath[0]) {
         strcpy(browsedir, docpath);
@@ -353,6 +365,7 @@ button:
             break;
         }
         if (!browsedir[0]) { beep(); continue; }
+        if (mode == 1 && !strchr(fname, '.')) odt_name();
         if (!valid_name(fname)) {
             ptr_hide();
             alert("Names are 1-15 letters, digits or\nperiods, starting with a letter.", "OK", 0, 0);

@@ -13,9 +13,10 @@ ${BIN}ld65 -C loader/loader.cfg -o build/RW2.SYSTEM build/loader.o
 cd src
 ${BIN}cl65 -t apple2enh -C rw2gfx.cfg -Os -Or -Cl -m ../build/rw2.map -o ../build/RW2.MAIN \
   main.c core.c ovl_file.c ovl_spell.c ovl_menu.c ovl_edit.c ovl_print.c ovl_acc.c ovl_dlg.c \
-  prtio.s accio.s gfx.s lowlevel.s fonts.s sys.s
+  ovl_odtout.c ovl_odtzip.c ovl_odtin.c ovl_odtrd.c \
+  prtio.s accio.s gfx.s lowlevel.s fonts.s sys.s crc32.s inflate.s
 cd ../build
-for n in 1 2 3 4 5 6 7; do mv RW2.MAIN.$n RW2.OVL$n; done
+for n in 1 2 3 4 5 6 7 8 9 A B; do mv RW2.MAIN.$n RW2.OVL$n; done
 mv RW2.MAIN.F RW2.FONTS
 mv RW2.MAIN.L RW2.LC
 rm -f *.o

@@ -6,7 +6,12 @@ double hi-res (560×192) with its own fonts, and is designed for a hard disk.
 
 ![RetroWrite II with a letter on the screen](screenshots/letter.png)
 
-**Version 2.1** · [User's Manual (PDF)](docs/RetroWrite_II_Manual.pdf)
+**Version 2.2** · [User's Manual (PDF)](docs/RetroWrite_II_Manual.pdf)
+
+**New in 2.2: ODT documents.** RetroWrite II saves and opens `.ODT` files, the
+OpenDocument format of LibreOffice and OpenOffice, which Word, Google Docs and
+Pages also open. Write on the Apple IIe, copy the file to a modern computer and
+double-click it, or bring documents back the other way.
 
 ## Features
 
@@ -22,6 +27,7 @@ double hi-res (560×192) with its own fonts, and is designed for a hard disk.
 - Up to four documents open at once
 - Desk accessories: Startup Preferences, Load DOS 3.3 File, Communications (Super Serial Card terminal), and BASIC.SYSTEM (type `BYE` to come back)
 - A Mouse Tutorial document
+- Saves and opens ODT documents (LibreOffice, OpenOffice, Word): fonts, sizes, styles, alignment, spacing, tabs, margins, page breaks, header and footer carry across
 - Opens and saves plain ProDOS text files as well as its own documents
 
 | Menu | Items |
@@ -53,7 +59,7 @@ folder (for example `/HD/RETROWRITE`) on your ProDOS disk with these types:
 | RW2.SYSTEM | SYS ($FF) | $2000 |
 | RW2.MAIN | BIN ($06) | $4000 |
 | RW2.LC | BIN | $D400 |
-| RW2.FONTS, RW2.OVL1 – RW2.OVL7, RW2.SPLASH, SPELL.DICT | BIN | $0000 |
+| RW2.FONTS, RW2.OVL1 – RW2.OVL9, RW2.OVLA, RW2.OVLB, RW2.SPLASH, SPELL.DICT | BIN | $0000 |
 | TUTORIAL, LETTER | $50 (GWP) | $5257 |
 | GLOSSARY | TXT ($04) | $0000 |
 
@@ -82,7 +88,7 @@ This writes everything into `build/`; the result is byte-for-byte the same as `p
 
 | Folder | Contents |
 |---|---|
-| `src/` | The program: C and 65C02 assembly for cc65. `main.c` and `core.c` stay in memory; `ovl_*.c` are overlays loaded from disk when needed (files, spelling, editing, menus, printing, accessories, dialogs). `gfx.s` draws text and graphics in double hi-res. |
+| `src/` | The program: C and 65C02 assembly for cc65. `main.c` and `core.c` stay in memory; `ovl_*.c` are overlays loaded from disk when needed (files, spelling, editing, menus, printing, accessories, dialogs, and the ODT writer and reader: `ovl_odtout.c`/`ovl_odtzip.c` write the XML and the ZIP, `ovl_odtin.c` with `inflate.s` unpacks, `ovl_odtrd.c` reads the XML). `gfx.s` draws text and graphics in double hi-res. |
 | `loader/` | `RW2.SYSTEM`: checks the machine, shows the splash picture and loads the program |
 | `art/` | The fonts (`font_*.py`, compiled by `mkfonts.py`), splash picture, tutorial and sample-document generators |
 | `install/` | The disk-image installer |
@@ -90,6 +96,12 @@ This writes everything into `build/`; the result is byte-for-byte the same as `p
 | `docs/` | The User's Manual as a PDF |
 
 To rebuild the manual: `cd man && python3 mkmanual.py ../docs/RetroWrite_II_Manual.pdf`.
+
+## ODT support, in brief
+
+- **Saving:** Save As adds `.ODT` to a name without a period; a name with another ending (such as `LETTER.RW`) saves RetroWrite II's own format. The ODT is a ZIP with its parts stored (no compression), written with CRC-32 by 6502 code. Fonts become Liberation Sans/Serif/Mono and the 9/18/27 point sizes become 12/24/36 point, which keeps lines about as long as RetroWrite II prints them.
+- **Opening:** the Open dialog lists names ending in `.ODT` whatever their ProDOS type. A 6502 DEFLATE decoder unpacks `styles.xml` and `content.xml` into work files, using aux memory $4000-$BFFF as its 32K window, then a streaming XML reader builds the document. Text beyond ASCII is mapped to the nearest plain letters; pictures, footnotes and comments are left out.
+- **Speed:** about half a minute for a short letter saved by LibreOffice on a 1 MHz IIe; files RetroWrite II saved itself open faster.
 
 ## Document format
 

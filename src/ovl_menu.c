@@ -17,10 +17,10 @@
 /* ---------------------------------------------------------------------- */
 
 static const char about_msg[] =
-    "RetroWrite II   version 2.1\n"
+    "RetroWrite II   version 2.2\n"
     "A word processor for the enhanced Apple IIe\n"
     "Fonts: Sans, Serif and Mono, three sizes,\n"
-    "styles, ruler, printing and glossary.\n"
+    "styles, ruler, printing, glossary and ODT.\n"
     "6502 Retro Computing";
 
 void about(void)

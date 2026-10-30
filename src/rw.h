@@ -69,6 +69,17 @@
 #define OV_PRINT 5
 #define OV_ACC   6
 #define OV_DLG   7
+#define OV_ODTOUT 8
+#define OV_ODTIN  9
+#define OV_ODTRD  10
+#define OV_ODTZIP 11
+#define FT_ODT   0xD0           /* pseudo file type: a name ending in .ODT */
+unsigned char odt_content(void); /* overlay 8: the text -> RW2.XML2 */
+unsigned char odt_save(void);   /* overlay 11: RW2.XML2 + styles -> pathbuf as ODT */
+unsigned char odt_unzip(void);  /* overlay 9: pathbuf -> RW2.XML1/2 */
+unsigned char odt_read(void);   /* overlay 10: RW2.XML1/2 -> document */
+extern unsigned char iob_limit;         /* open files allowed: 2 borrows $0C00 */
+extern unsigned char upool_loaded;
 unsigned char __fastcall__ load_ovl(unsigned char n);
 void __fastcall__ edit_command(unsigned char c);
 void __fastcall__ menu_command(unsigned char c);
@@ -113,7 +124,7 @@ unsigned char caret_pa(void);
 void ruler_click(void);
 unsigned __fastcall__ para_start(unsigned p);
 extern char docpath[65];
-extern unsigned char doctype;           /* 0 = RetroWrite document, 1 = text file */
+extern unsigned char doctype;           /* 0 = RetroWrite document, 1 = text file, 2 = ODT */
 
 /* fixed buffers in low main memory */
 #define iob     ((unsigned char *)0x1000)  /* 512-byte I/O buffer; C stack is $1200-$13FF */

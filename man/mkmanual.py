@@ -93,7 +93,7 @@ A(Spacer(1, 40))
 A(P('<font name="Head" size="16">RetroWrite II</font>', BODY))
 A(P('Word processing for the enhanced Apple IIe', BODY))
 A(Spacer(1, 10))
-A(P('User’s Manual for version 2.1, 2026', BODY))
+A(P('User’s Manual for version 2.2, 2026', BODY))
 A(Spacer(1, 300))
 A(P('RetroWrite II and this manual were written by 6502 Retro Computing in 2026 for '
     'Apple II enthusiasts. You may copy the program and this manual for your own use '
@@ -126,6 +126,10 @@ chapter('', 'Welcome to RetroWrite II', [
     'RetroWrite II is made to live on a hard disk; the parts of the program that you '
     'use less often are read from the disk when you need them, which leaves room in '
     'memory for long documents.' % oa(),
+    'Documents are saved as ODT, the OpenDocument format of LibreOffice and OpenOffice, '
+    'which Microsoft Word opens too, so the letters and newsletters you write on the '
+    'Apple IIe can go straight to a modern computer, and documents from a modern computer '
+    'can come back.',
 ])
 sub('What you need')
 for t in bullets(
@@ -278,9 +282,11 @@ A(P('Click in the long paragraph and click the fourth alignment icon in the rule
     '(or choose <b>Justify</b>, %s) so that both of its edges are straight.' % oa('J'), BODYJ))
 sub('Step 5: Save the letter')
 A(P('Choose <b>Save</b> from the File menu (%s). Because the letter has no name yet, the '
-    'Save dialog appears. Type a name, such as %s, and click <b>Save</b>. The name '
-    'appears at the top of the File menu and in the Windows menu.'
-    % (oa('S'), scr('MYLETTER')), BODYJ))
+    'Save dialog appears. Type a name, such as %s, and click <b>Save</b>. RetroWrite II '
+    'adds %s and saves the letter as an ODT document, which you can also open with '
+    'LibreOffice or Word on a modern computer. The name appears at the top of the File '
+    'menu and in the Windows menu.'
+    % (oa('S'), scr('MYLETTER'), scr('.ODT')), BODYJ))
 sub('Step 6: Print it')
 A(P('Turn on your printer and choose <b>Print</b> from the File menu (%s). The first '
     'time, click <b>Setup...</b> and choose your printer and the slot of its card, then '
@@ -383,7 +389,7 @@ def cover(c, doc):
         lw = 120
         lh = lw * li.height / li.width
         c.drawImage(logo, 60, 150, lw, lh, mask='auto')
-    head_text(c, 200, 196, 'Version 2.1', 22)
+    head_text(c, 200, 196, 'Version 2.2', 22)
     c.setFont('Helvetica', 11)
     c.drawString(200, 176, '6502 Retro Computing  ·  2026')
     c.setFont('Helvetica-Oblique', 8.5)
@@ -396,13 +402,13 @@ def cover(c, doc):
     c.setFont('Helvetica', 7.6)
     c.drawString(70, 89, 'RetroWrite II is an independent word processor by 6502 Retro Computing, written in 2026 for Apple II')
     c.drawString(70, 78, 'enthusiasts. It is not a product of Apple, nor of the publishers of MultiScribe, MouseWrite or MacWrite.')
-    c.drawString(70, 67, 'This manual accompanies RetroWrite II version 2.1.')
+    c.drawString(70, 67, 'This manual accompanies RetroWrite II version 2.2.')
     c.restoreState()
 
 
 def build(out):
     doc = Doc(out, pagesize=(W, H), title='RetroWrite II User’s Manual',
-              author='6502 Retro Computing', subject='RetroWrite II 2.1 for the Apple IIe')
+              author='6502 Retro Computing', subject='RetroWrite II 2.2 for the Apple IIe')
     frame = Frame(X0, 66, COLW, H - 66 - 58, leftPadding=0, rightPadding=0,
                   topPadding=0, bottomPadding=0)
     doc.addPageTemplates([
