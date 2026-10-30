@@ -170,6 +170,7 @@ unsigned char __fastcall__ run_buttons(unsigned char extra_keys);
 void caret_hide(void);
 void __fastcall__ set_style(unsigned char kind, unsigned char val);
 unsigned char wait_event(void);
+void wait_up(void);
 void beep(void);
 
 /* commands provided by modules */

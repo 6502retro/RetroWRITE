@@ -297,7 +297,7 @@ unsigned char __fastcall__ file_dialog(unsigned char mode)
         /* mouse */
         b = hit_button();
         if (b != 0xFF) {
-            while (mbtn) mouse_poll();
+            wait_up();
             if (hit_button() != b) continue;
             goto button;
         }
@@ -311,14 +311,14 @@ unsigned char __fastcall__ file_dialog(unsigned char mode)
                 if (sel < scr) sel = scr;
                 if (sel >= scr + LROWS) sel = scr + LROWS - 1;
                 draw_list();
-                while (mbtn) mouse_poll();
+                wait_up();
                 continue;
             }
             if (scr + i < nents) {
                 n = scr + i;
                 if (n == last && dct) {     /* double click */
                     sel = n;
-                    while (mbtn) mouse_poll();
+                    wait_up();
                     b = 0;
                     goto button;
                 }
@@ -332,7 +332,7 @@ unsigned char __fastcall__ file_dialog(unsigned char mode)
                 draw_list();
             }
         }
-        while (mbtn) mouse_poll();
+        wait_up();
         continue;
 button:
         if (b == 3) break;                      /* Cancel */

@@ -118,7 +118,7 @@ unsigned char __fastcall__ run_buttons(unsigned char extra_keys)
             if (extra_keys) return 0xFE;
         } else {
             b = hit_button();
-            while (mbtn) mouse_poll();
+            wait_up();
             if (b != 0xFF && hit_button() == b) return b;
             if (extra_keys) return 0xFD;
         }

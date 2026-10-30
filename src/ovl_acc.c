@@ -239,7 +239,7 @@ static void dos_load(void)
             if (key == K_DOWN && sel + 1 < n) ++sel;
             if (key == K_RET) { done = 1; break; }
         } else {
-            while (mbtn) mouse_poll();
+            wait_up();
             if (my >= 50 && my < 50 + n * 11 && mx > 14 * 7 && mx < 65 * 7) {
                 k = (my - 50) / 11;
                 if (k == sel) { done = 1; break; }

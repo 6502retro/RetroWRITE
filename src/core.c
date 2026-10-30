@@ -1099,7 +1099,7 @@ static void click_scrollbar(void)
     } else if (y >= thumb_y + 11) {
         page(1);
     } else {
-        while (mbtn) mouse_poll();
+        wait_up();
         y = my < MENUH + 11 ? MENUH + 11 : (my > BOTY - 22 ? BOTY - 22 : my);
         top = line_start_of(((tlen >> 6) * (y - MENUH - 11) / SBTRACK) << 6);
         topf = L_nf; topp = L_np;
@@ -1108,7 +1108,7 @@ static void click_scrollbar(void)
         if (line_of(cur) == 0xFF) cur = anc = skip_fwd(top ? top : 1);
     }
     draw_scrollbar();
-    while (mbtn) mouse_poll();
+    wait_up();
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1133,6 +1133,19 @@ unsigned char wait_event(void)
         mouse_poll();
         if (mx != ox || my != oy || !ptr_on) { ptr_hide(); pshape = 0; ptr_show(); }
         if (mbtn) return 2;
+    }
+}
+
+/* wait for the button to go up; the pointer keeps following the mouse */
+void wait_up(void)
+{
+    unsigned ox;
+    unsigned char oy;
+    while (mbtn) {
+        ox = mx;
+        oy = my;
+        mouse_poll();
+        if (mx != ox || my != oy) { ptr_hide(); ptr_show(); }
     }
 }
 

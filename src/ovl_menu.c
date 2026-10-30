@@ -315,27 +315,33 @@ static unsigned char __fastcall__ title_at(unsigned x)
    the menu open until the next click */
 static unsigned char menu_mouse(void)
 {
-    unsigned char m, nm, it = 0xFF, ni, sticky = 0, cmd = CM_NONE;
+    unsigned char m, nm, it = 0xFF, ni, sticky = 0, cmd = CM_NONE, oy, moved = 1;
+    unsigned ox;
     m = title_at(mx);
-    if (m == 0xFF) { while (mbtn) mouse_poll(); return CM_NONE; }
+    if (m == 0xFF) { wait_up(); return CM_NONE; }
     open_menu(m);
     for (;;) {
-        ptr_show();
+        ox = mx;
+        oy = my;
         mouse_poll();
+        if (mx != ox || my != oy) moved = 1;
         if (PEEK(KBD) & 0x80) { POKE(KBDSTRB, 0); it = 0xFF; break; }
         if (!mbtn) {
-            if (sticky) continue;
-            if (my < MENUH && title_at(mx) == m) { sticky = 1; continue; }
-            break;
-        }
-        if (sticky) {                   /* a click while the menu stays open */
-            while (mbtn) mouse_poll();
+            if (!sticky) {              /* released: on the title it stays open */
+                if (my < MENUH && title_at(mx) == m) sticky = 1;
+                else break;
+            }
+        } else if (sticky) {            /* a click while the menu stays open */
+            wait_up();
             if (my >= MENUH) { it = item_at(my); break; }
             sticky = 0;
             nm = title_at(mx);
             if (nm == m || nm == 0xFF) { it = 0xFF; break; }
+            moved = 1;
         }
-        ptr_hide();
+        if (!moved) continue;
+        moved = 0;
+        ptr_hide();                     /* follow the pointer (dragging or not) */
         if (my < MENUH) {
             nm = title_at(mx);
             if (nm != 0xFF && nm != m) {
@@ -354,6 +360,7 @@ static unsigned char menu_mouse(void)
                 it = ni;
             }
         }
+        ptr_show();
     }
     if (it != 0xFF) {
         cmd = menus[m][it].cmd;
@@ -496,7 +503,7 @@ void ruler_click(void)
             v = (unsigned *)(LEFTX + k * 22 + (k > 3 ? 16 : 0));
             if (x >= (unsigned)v && x < (unsigned)v + 20) break;
         }
-        while (mbtn) mouse_poll();
+        wait_up();
         if (k < 4) set_para(0x0C, k << 2);
         else if (k < 7) set_para(0x30, (k - 4) << 4);
         return;
@@ -509,7 +516,7 @@ void ruler_click(void)
         if (x + 4 >= dtabs[i] && x <= dtabs[i] + 4) { v = &dtabs[i]; break; }
     if (!v) {                           /* new tab */
         for (i = 0; i < 8 && dtabs[i]; ++i) ;
-        if (i == 8 || !x) { beep(); while (mbtn) mouse_poll(); return; }
+        if (i == 8 || !x) { beep(); wait_up(); return; }
         v = &dtabs[i];
         *v = x;
         draw_ruler();
