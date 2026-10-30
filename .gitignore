@@ -5,3 +5,9 @@ __pycache__/
 *.hdv
 *.2mg
 ac.jar
+man/pass1.pdf
+man/pass2.pdf
+man/cover.pdf
+man/back.pdf
+man/tmp.html
+man/figs/logo.png

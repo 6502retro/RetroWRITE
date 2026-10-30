@@ -6,7 +6,7 @@ double hi-res (560×192) with its own fonts, and is designed for a hard disk.
 
 ![RetroWrite II with a letter on the screen](screenshots/letter.png)
 
-**Version 2.2** · [User's Manual (PDF)](docs/RetroWrite_II_Manual.pdf)
+**Version 2.2** · [Owner's Manual (PDF)](docs/RetroWrite%20II%20Owner's%20Manual.pdf)
 
 **New in 2.2: ODT documents.** RetroWrite II saves and opens `.ODT` files, the
 OpenDocument format of LibreOffice and OpenOffice, which Word, Google Docs and
@@ -92,10 +92,10 @@ This writes everything into `build/`; the result is byte-for-byte the same as `p
 | `loader/` | `RW2.SYSTEM`: checks the machine, shows the splash picture and loads the program |
 | `art/` | The fonts (`font_*.py`, compiled by `mkfonts.py`), splash picture, tutorial and sample-document generators |
 | `install/` | The disk-image installer |
-| `man/` | The manual's source (`mkmanual.py`, needs `reportlab`) and the screen pictures used in it |
-| `docs/` | The User's Manual as a PDF |
+| `man/` | The manual: `manual.md` is the text, `build.py` typesets it (Playwright, markdown, pypdf, pdfplumber, reportlab) in the same design as the RetroDB and RetroCALC manuals; `figs/` are the screen pictures |
+| `docs/` | The Owner's Manual as a PDF |
 
-To rebuild the manual: `cd man && python3 mkmanual.py ../docs/RetroWrite_II_Manual.pdf`.
+To rebuild the manual: `python3 man/build.py "docs/RetroWrite II Owner's Manual.pdf"`.
 
 ## ODT support, in brief
 
@@ -118,7 +118,7 @@ margins, tab stops, header and footer) followed by ASCII text with format bytes
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). RetroWrite II is an independent program by
+MIT — see [LICENSE](LICENSE). The manual's fonts (EB Garamond, Courier Prime) are under the SIL Open Font License (`man/fonts`). RetroWrite II is an independent program by
 6502 Retro Computing. It is not a product of Apple or of the publishers of
 MacWrite, MultiScribe or MouseWrite, and contains no code from them.
 
