@@ -6,7 +6,7 @@ double hi-res (560×192) with its own fonts, and is designed for a hard disk.
 
 ![RetroWrite II with a letter on the screen](screenshots/letter.png)
 
-**Version 2.2** · [Owner's Manual (PDF)](docs/RetroWrite%20II%20Owner's%20Manual.pdf)
+**Version 2.2** · [Download (Releases)](https://github.com/6502retro/RetroWRITE/releases/latest) · [Owner's Manual (PDF)](docs/RetroWrite%20II%20Owner's%20Manual.pdf)
 
 **New in 2.2: ODT documents.** RetroWrite II saves and opens `.ODT` files, the
 OpenDocument format of LibreOffice and OpenOffice, which Word, Google Docs and
@@ -51,7 +51,7 @@ double-click it, or bring documents back the other way.
 
 ## Installing
 
-The ready-to-use files are in [`prebuilt/`](prebuilt). Copy them into one
+The ready-to-use files are in [`prebuilt/`](prebuilt), and as one zip with the installer and the manual on the [Releases page](https://github.com/6502retro/RetroWRITE/releases/latest). Copy them into one
 folder (for example `/HD/RETROWRITE`) on your ProDOS disk with these types:
 
 | File | ProDOS type | Aux type |

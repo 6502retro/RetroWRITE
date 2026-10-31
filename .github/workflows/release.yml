@@ -1,0 +1,32 @@
+# Publishes a GitHub release when a notes file is added to .github/release-notes/
+# (for example v2.2.md -> release v2.2), with a zip of the ready-to-use files.
+name: release
+on:
+  push:
+    branches: [main]
+    paths: ['.github/release-notes/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish any release that does not exist yet
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for f in .github/release-notes/v*.md; do
+            tag=$(basename "$f" .md)
+            if gh release view "$tag" >/dev/null 2>&1; then echo "$tag exists"; continue; fi
+            dir="RetroWrite-II-${tag#v}"
+            mkdir -p "$dir"
+            cp prebuilt/* install/install_rw2.py install/setaux.py "$dir/"
+            cp "docs/RetroWrite II Owner's Manual.pdf" "$dir/"
+            cp README.md LICENSE "$dir/"
+            zip -qr "$dir.zip" "$dir"
+            cp "docs/RetroWrite II Owner's Manual.pdf" RetroWrite-II-Owners-Manual.pdf
+            gh release create "$tag" --target "$GITHUB_SHA" --title "RetroWrite II ${tag#v}" \
+              --notes-file "$f" "$dir.zip" RetroWrite-II-Owners-Manual.pdf
+          done
